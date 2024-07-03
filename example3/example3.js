@@ -132,7 +132,6 @@ async function apply_value(number){
 //card click event closer형태로 캡슐화
 const click_card = (function (){
     let card_data = null    //target dataset state값 저장하는 곳 
-
     return async function (target){
         const cards = Array.from(document.querySelectorAll('.card'))
 
