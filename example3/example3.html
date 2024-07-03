@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="example3.css">
+    <title>Document</title>
+</head>
+<body>
+    <form class="card-input" style="height: 3vh;">
+        <input id="num_data" type="number" style="height: 100%;">
+        <input type="submit" style="height: 100%;" value="카드 생성">
+    </form>
+    <div class="score-board">
+        <div class="score-board__description">
+            <span style="width: 4vw;">설명</span>
+            <span>2(2by1) ~ 36(6by6)까지의 숫자(짝수)를 입력해주세요. 그이상 숫자의 카드게임은 제한되었습니다.</span>
+        </div>
+        <div class="score-board__time-board">
+            <span style="width: 4vw;">시간</span>
+            <span class="score-board__time"></span>
+        </div>
+        <div class="score-board__counts-board">
+            <span style="width: 4vw;">도전 회수</span>
+            <span class="score-board__counts">0</span>
+        </div>
+    </div>
+    <div class="card-container">
+
+    </div>
+
+    <script src="example3.js"></script>
+</body>
+</html>
