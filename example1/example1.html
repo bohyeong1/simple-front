@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="select-container">
-        <select class="select-container__dr1">
+        <select class="select-container__dr1" id="select">
             <option value="" disabled selected hidden>dropdown 1</option>
             <option value="item 1">item 1</option>
             <option value="item 2">item 2</option>
@@ -16,14 +16,21 @@
             <option value="item 4">item 4</option>
             <option value="item 5">item 5</option>
         </select>
-        <select class="select-container__dr2">
-            <option value="" disabled selected hidden>dropdown 2</option>
-            <option value="item 1">item 1</option>
-            <option value="item 2">item 2</option>
-            <option value="item 3">item 3</option>
-            <option value="item 4">item 4</option>
-            <option value="item 5">item 5</option>
-        </select>
+
+        <!-- 커스텀 sellect -->
+        <div class="select-container__custom-dr2" id="select">
+            <div class="select-container__custom-logo"  tabindex="0">
+                <span>dropdown 2</span>
+            </div>
+            <div class="select-container__custom-options" id="drop_down" data-state="false">
+                <div class="select-container__list" data-value="item 1">item 1</div>
+                <div class="select-container__list" data-value="item 2">item 2</div>
+                <div class="select-container__list" data-value="item 3">item 3</div>
+                <div class="select-container__list" data-value="item 4">item 4</div>
+                <div class="select-container__list" data-value="item 5">item 5</div>
+            </div>
+
+        </div>
     </div>
     <script src="example1.js"></script>
 </body>
