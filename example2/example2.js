@@ -40,6 +40,12 @@ const default_img = {
 const random_color = [
     {color:'#798e7b'}, {color:'#e49366'}, {color:'#e6e6e6'}, {color:'#b692a1'}, {color:'#bfccd8'},
 ]
+// wait
+function wait(time){
+    return new Promise(res=>{setTimeout(res,time)})
+}
+let is_enter_profile = false //////enter이벤트 등록시 자식요소에서 enter event 막기
+let box = null ///호버시 생성하는 레퍼
 
 // body
 const body = document.querySelector('body')
@@ -57,6 +63,18 @@ wrapper.addEventListener('click',()=>{
         imgs.forEach((el)=>{
             el.classList.remove('click_img_active')
             wrapper.classList.remove('wrapper-active')
+            if(el.dataset.is_clicked === 'true' && el.dataset.is_blured === 'true'){
+                el.classList.add('checked_active')
+            }
+            el.dataset.is_clicked =  'false'
+            is_enter_profile = false
+            body.style.backgroundColor='black'
+            const wrappers = Array.from(document.querySelectorAll('.profile-container__profile-wrapper')) 
+            if(wrappers && wrappers.length !==0){
+                wrappers.forEach((el)=>{
+                    el.remove(box)
+                })
+            }
         })
     }else{
         alert('이미지가 없는데 wrapper의 display가 block되었음. 코드수정해야함')
@@ -64,18 +82,70 @@ wrapper.addEventListener('click',()=>{
 })
 
 // 콘터에너 마우스 호버
-function hover_container(e){
+async function hover_container(e){
     // console.log(this.dataset.color)
+
+    if(is_enter_profile){return}//자식요소 이미지가 화면 중앙으로 왔을 때 enter 이벤트 들어오는거 막기
+
+    ////////////////////이미지 닫은 후 에니메이션 자연스럽게 연결시키기
+    const wrappers = Array.from(document.querySelectorAll('.profile-container__profile-wrapper')) 
+    if(wrappers && wrappers.length !==0){
+        wrappers.forEach((el)=>{
+            el.remove(box)
+        })
+    }
+    // console.log(e.target)
     body.style.backgroundColor = this.dataset.color
+    e.stopPropagation()
     // console.log(e.offsetX, e.offsetY)
     // console.log('요소 높이, 너비', this.clientHeight, this.clientWidth)
-    console.log(Math.abs(e.offsetY - this.clientHeight))
-    if(Math.abs(e.offsetY - this.clientHeight) <= 2 ){
-        console.log('아래 확인')
-    }else if(Math.abs(e.offsetY) <= 2 ){
-        console.log('위 확인')
-    }
+    // console.log(Math.abs(e.offsetY - this.clientHeight))
 
+    const top = Math.abs(e.offsetY)
+    const right = Math.abs(e.offsetX - this.clientWidth)
+    const left = Math.abs(e.offsetX)
+    const bottom = Math.abs(e.offsetY - this.clientHeight)
+
+    // console.log(top,right,left,bottom)
+    const direction = Math.min(top,right,left,bottom)
+    // console.log(direction)
+
+    if(direction === top){
+        // console.log('위')
+        box = document.createElement('div')
+        box.className = 'profile-container__profile-wrapper'
+        this.appendChild(box)
+        box.style.top = '-100%'
+        await wait(40)
+        box.style.top = 0
+    }else if(direction === bottom){
+        // console.log('아래')
+        box = document.createElement('div')
+        box.className = 'profile-container__profile-wrapper'
+        this.appendChild(box)
+        box.style.top = '100%'
+        await wait(40)
+        box.style.top = 0
+    }else if(direction === left){
+        // console.log('좌')
+        box = document.createElement('div')
+        box.className = 'profile-container__profile-wrapper'
+        this.appendChild(box)
+        box.style.left = '-100%'
+        await wait(40)
+        box.style.left = 0
+    }else if(direction === right){
+        // console.log('우')
+        box = document.createElement('div')
+        box.className = 'profile-container__profile-wrapper'
+        this.appendChild(box)
+        box.style.left = '100%'
+        await wait(40)
+        box.style.left = 0
+    }
+    else{ 
+        alert('에러발생')
+    }
 }
 
 
@@ -97,31 +167,54 @@ function proflie_lender(users){
         // 호버이벤트
         container.addEventListener('mouseenter', hover_container)
         // mouse out
-        container.addEventListener('mouseleave',()=>{body.style.backgroundColor='black'})
+        container.addEventListener('mouseleave',()=>{
+            if(is_enter_profile){return}
+            body.style.backgroundColor='black'
+            const wrappers = Array.from(document.querySelectorAll('.profile-container__profile-wrapper')) 
+            if(wrappers && wrappers.length !==0){
+                wrappers.forEach((el)=>{
+                    el.remove(box)
+                })
+            }
+        })
+
 
         // img-container
         const img_container = document.createElement('div')
         img_container.className = 'profile-container__profile-img'
-        container.append(img_container)
+        container.appendChild(img_container)
+
+        //img-wrapper
+        const img_wrapper = document.createElement('div')
+        img_wrapper.className = 'profile-container__img-wrapper'
+        img_container.appendChild(img_wrapper)
+
+
         // img
         const img = document.createElement('img')
         img.className = 'profile-container__inner-img'
+        img.dataset.is_clicked = false
+        img.dataset.is_blured = false
         img.setAttribute('src', !el.img_url || el.img_url.length === 0 ? default_img.url : el.img_url) 
-        img_container.appendChild(img)
+        img_wrapper.appendChild(img)
+
+
 
         // select btn
         const select_btn = document.createElement('input')
         select_btn.type = 'checkbox'
         select_btn.className = 'profile-container__checkbox'
-        img_container.appendChild(select_btn)
+        img_wrapper.appendChild(select_btn)
 
         // select btn event
         select_btn.addEventListener('click',(e)=>{
             console.log(e.target.checked)
             if(e.target.checked){
-                e.target.previousElementSibling.classList.add('checked_active')
+                img.classList.add('checked_active')
+                img.dataset.is_blured = true
             }else{
-                e.target.previousElementSibling.classList.remove('checked_active')
+                img.classList.remove('checked_active')
+                img.dataset.is_blured = false
             }
         })
 
@@ -176,7 +269,23 @@ function split_text(line, text){
 
 
 //////////이미지 클릭
-function img_click(){
+function img_click(e){
+    e.stopPropagation()
+    is_enter_profile = !is_enter_profile
+    const is_clicked = this.dataset.is_clicked === 'true' ? true : false
+    const is_blured = this.dataset.is_blured === 'true' ? true : false
+    // console.log(is_clicked)
+    this.dataset.is_clicked = !(is_clicked)
+
+    // console.log(this.dataset.is_clicked)
+    // 블러된 이미지 확대 시 블러 처리 없에고 다시 클릭 시 블러처리 원상복구 // 검은색 레퍼 지우기
+    if(!is_clicked && is_blured){
+        this.classList.remove('checked_active')
+        // console.log('확인')
+    }else if(is_clicked && is_blured){
+        this.classList.add('checked_active')
+    }
+    // console.log(this.dataset.is_clicked)
     this.classList.toggle('click_img_active')
     wrapper.classList.toggle('wrapper-active')
 }
@@ -211,7 +320,7 @@ function resize_text(data){
     const title = Array.from(document.querySelectorAll('.profile-container__profile-title')) 
     const description = Array.from(document.querySelectorAll('.profile-container__profile-description')) 
 
-    console.log('확인')
+    console.log('리사이징')
 
     title.forEach((el,index)=>{
 

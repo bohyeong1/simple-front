@@ -94,6 +94,7 @@ const startQuestionTimer = (function(){
                                 log.textContent = '정답입니다'
                                 clearInterval(timer)
                                 timer = null
+                                start_btn.textContent = 'RESTART'
                                 clearTimeout(recursion_timer)
                                 recursion_timer=null
                                 input_time = time/2
@@ -107,6 +108,7 @@ const startQuestionTimer = (function(){
                                 timer = null
                                 clearTimeout(recursion_timer)
                                 recursion_timer=null
+                                start_btn.textContent = 'RESTART'
                                 input_time = time/2
                                 timer_board.textContent = `${String(Math.floor(input_time/60)).padStart(2,0)}:${String(Math.floor(input_time%60)).padStart(2,0)}`
                                 start_state=false

@@ -76,6 +76,13 @@ async function create_card(length){
 
 ////////////timer 시작
 function start_timer(){
+
+    // 카드 뒤집어 졌을 때 커서 포인터 css넣기(게임시작시)
+    const cards = Array.from(document.querySelectorAll('.card')) 
+    cards.forEach((el)=>{
+        el.style.cursor = 'pointer'
+    })
+
     let timer = 0
     challeng_time.textContent = `${timer}초`
     timer_interval = setInterval(()=>{
