@@ -301,7 +301,7 @@ let debounce_timer = null
 
 // 디바운스 0.8초 후 화면 레이아웃 재조정
 function debounce_func(callback, data){
-    if(debounce_func){
+    if(debounce_timer){
         clearTimeout(debounce_timer)
     }
     debounce_timer = setTimeout(()=>{callback(data)}, 800)
