@@ -40,6 +40,7 @@ const default_img = {
 const random_color = [
     {color:'#798e7b'}, {color:'#e49366'}, {color:'#e6e6e6'}, {color:'#b692a1'}, {color:'#bfccd8'},
 ]
+
 // wait
 function wait(time){
     return new Promise(res=>{setTimeout(res,time)})

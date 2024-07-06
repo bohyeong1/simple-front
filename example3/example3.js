@@ -79,9 +79,13 @@ function start_timer(){
 
     // 카드 뒤집어 졌을 때 커서 포인터 css넣기(게임시작시)
     const cards = Array.from(document.querySelectorAll('.card')) 
-    cards.forEach((el)=>{
-        el.style.cursor = 'pointer'
-    })
+    if(cards && cards.length !== 0){
+        cards.forEach((el)=>{
+            el.style.cursor = 'pointer'
+        })
+
+    }
+
 
     let timer = 0
     challeng_time.textContent = `${timer}초`
@@ -92,47 +96,79 @@ function start_timer(){
 
 }
 
+
+const value_func_state = [] //////그전에 실행 된 비동기 함수 제어하기 위한 통행증 담는 배열
+
 // card에 value 적용
 async function apply_value(number){
+
     const randomValue = create_value(number)
     const cards = Array.from(document.querySelectorAll('.back'))
     const container = Array.from(document.querySelectorAll('.card'))
     // console.log(randomValue.value)
     const length = cards.length
 
-    //////////게임 포기 시 타이머, 도전회수, 성공회수 초기화
-    if(timer_interval){
-        clearInterval(timer_interval)
-        counts = 1
-        challeng_count.textContent = 0
-        challeng_time.textContent = ''
-        success_counts = 0
-        start_state = false
+    //////ticket이 중첩 된 티켓 발ㄹ급 확률 36^3 => 1/46656^2 =  1/2,176,782,336
+    const ticket = Math.random().toString(36)[2] + Math.random().toString(36)[2] + Math.random().toString(36)[2]
+    // console.log(ticket)
+    value_func_state.push(ticket)  /// 함수 관리 배열에 티켓담기
+
+    ////////////////비동기 함수 완전히 실행 전 카드 재 생성 시 에러처리를 위한 try catch문
+    try{
+            //////////게임 포기 시 타이머, 도전회수, 성공회수 초기화
+        if(timer_interval){
+            clearInterval(timer_interval)
+            timer_interval = null
+            counts = 1
+            challeng_count.textContent = 0
+            challeng_time.textContent = ''
+            success_counts = 0
+            start_state = false
+        }
+
+        for(let i = 0; i < length; i ++){
+            cards[i].textContent = randomValue[i]               ////////////실제 이미지 사용시 필요없는 코드// 이미지만 적용시키면 됨 // 확인을 위해서 text 값 변경
+            container[i].dataset.value = randomValue[i]             ////////실제 이미지 background 사용 시 data-value값으로 비교/검증
+            cards[i].style.backgroundColor = imgs[randomValue[i] - 1]
+        }
+
+        container.forEach((el)=>{
+            el.style.transform = 'rotateY(180deg)'
+        })
+
+
+
+        await wait(3000)
+        container.forEach((el)=>{
+            el.style.transform = 'rotateY(0)'
+        })
+
+
+        
+        if(value_func_state[value_func_state.length] === ticket){
+            // 가장 최신에 실행 된 비동기 함수만 타이머 호출
+            start_timer()
+        }else{
+            console.log('타이머 중첩실행 제한')
+        }
+
+
+        // click event 등록
+        container.forEach((el)=>{
+        el.addEventListener('click',()=>{click_card(el)})
+        })
+
+
+    }catch(e){
+        console.log('중첩실행 중 어떤 에러가 발생했나 확인', e.message)
+    }finally{
+        ////////////함수가 모두 실행되면 해당 티켓 만료시키기
+        const index = value_func_state.indexOf(ticket)       
+        value_func_state.splice(index,1) 
+        // console.log(value_func_state)
     }
+    
 
-
-    for(let i = 0; i < length; i ++){
-        cards[i].textContent = randomValue[i]               ////////////실제 이미지 사용시 필요없는 코드// 이미지만 적용시키면 됨 // 확인을 위해서 text 값 변경
-        container[i].dataset.value = randomValue[i]             ////////실제 이미지 background 사용 시 data-value값으로 비교/검증
-        cards[i].style.backgroundColor = imgs[randomValue[i] - 1]
-    }
-
-    container.forEach((el)=>{
-        el.style.transform = 'rotateY(180deg)'
-    })
-    await wait(3000)
-    container.forEach((el)=>{
-        el.style.transform = 'rotateY(0)'
-    })
-
-
-
-    start_timer()
-
-    // click event 등록
-    container.forEach((el)=>{
-    el.addEventListener('click',()=>{click_card(el)})
-    })
 }
 
 
@@ -167,7 +203,7 @@ const click_card = (function (){
                         challeng_count.textContent = 0
                         challeng_time.textContent = ''
                         clearInterval(timer_interval)
-
+                        timer_interval = null
 
                     }, { once: true })
                 }
@@ -203,6 +239,7 @@ async function submit_data(e){
     // console.log(data.length)
     if(!data){this.num_data.value = ''
               clearInterval(timer_interval)
+              timer_interval = null
               challeng_time.textContent = ''
               container.innerHTML=''
     }
