@@ -1,0 +1,87 @@
+*{
+    margin:0; padding:0; box-sizing: border-box;
+}
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;   
+    min-height: 100vh;
+    background: linear-gradient(to left top, #031A9A, #8B53FF);
+    padding: 0 35px;
+}
+button{
+    height: 50px;   width: 50px;    background-color: #fff;
+    text-align: center; line-height: 50px;  border-radius: 50%;
+    cursor: pointer; position : absolute;
+    top:50%; transform: translateY(-50%);   box-shadow: 0 3px 6px rgba(0,0,0,0.23);
+    font-size: 1.25rem;
+}
+.btn-right{
+    right: -22px;
+}
+.btn-left{
+    left:-22px;
+}
+.carousel :where(.card, .img){
+    display: flex;  align-items: center;    justify-content: center;
+
+}
+.card .img{
+    background-color: #8B53FF;
+    width: 148px;   height: 148px;  border-radius: 50%;
+}
+.card .img img{
+    width: 140px; height: 140px; object-fit: cover;
+    border-radius: 50%; border: solid 4px #fff;
+}
+
+.carousel .card{
+    scroll-snap-align: start;
+    list-style:none;
+    background-color: #fff; border-radius: 8px; height: 342px;
+    display: flex;  align-items: center;    justify-content: center;
+    flex-direction: column; padding-bottom: 15px;
+}
+.wrapper .carousel{
+    display: grid;  grid-auto-flow: column; grid-auto-columns: calc((100% / 3) - 12px);
+    gap:16px; 
+    overflow-x: auto;
+    scroll-snap-type:  x mandatory;
+    scroll-behavior : smooth;
+    scrollbar-width: 0;
+}
+.carousel::-webkit-scrollbar{
+    display: none;
+}
+
+.wrapper{
+    max-width: 1100px;  width: 100%;    position: relative;
+}
+
+.card h2{
+    font-weight: 500;   font-size: 1.56rem; margin:30px 0 5px;
+}
+.card span{
+    color: #6a6d78; font-size: 1.31rem;
+}
+.carousel.drag{
+    scroll-behavior : auto;
+    scroll-snap-type: none;
+}
+.drag{
+    cursor: grab;
+    user-select: none;
+
+}
+
+@media screen and (max-width:900px){
+    .wrapper .carousel{
+        grid-auto-columns: calc((100% / 2) - 9px);
+    }
+}
+
+@media screen and (max-width:600px){
+    .wrapper .carousel{
+        grid-auto-columns: 100%;
+    }
+}
